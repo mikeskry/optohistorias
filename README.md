@@ -4,7 +4,6 @@ Sistema de Gestión de Historias Clínicas para Ópticas
 
 ### Frontend (Angular 17+)
 - **Framework**: Angular 17+ con componentes standalone
-- **UI**: Bootstrap 5 + Font Awesome
 - **Estado**: RxJS BehaviorSubject para gestión de estado
 - **Formularios**: Reactive Forms con validaciones
 - **Routing**: Lazy loading para optimización
@@ -20,7 +19,6 @@ Sistema de Gestión de Historias Clínicas para Ópticas
 - **API**: RESTful con routing automático
 - **Validaciones**: Reglas de negocio en capa de servicio
 - **PDF**: Generación con FPDF/TCPDF (placeholder implementado)
-- **Archivos**: Upload seguro con validaciones
 
 ### Base de Datos
 - **Motor**: MySQL
