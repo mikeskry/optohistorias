@@ -1,0 +1,802 @@
+table td {
+  border: 1px solid black; /* borde en todas las celdas */
+  padding: 6px;            /* espacio interno */
+}
+
+.grid-table {
+  display: grid;
+  border: 1px solid var(--secondary-color);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  background-color: var(--secondary-color);
+  gap: 1px;
+}
+
+.cell {
+  background-color: white;
+  border: 1px solid var(--secondary-color);
+  padding: 8px 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  font-size: 0.9rem;
+}
+
+.cell input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  outline: none;
+}
+
+.cell input:focus {
+  background: white;
+  border: 1px solid var(--primary-color);
+  border-radius: 0.25rem;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Combinar columnas */
+.span-cols-2 {
+  grid-column: span 2;
+}
+
+.span-cols-3 {
+  grid-column: span 3;
+}
+
+.span-cols-4 {
+  grid-column: span 4;
+}
+
+.span-cols-5 {
+  grid-column: span 5;
+}
+
+.span-cols-6 {
+  grid-column: span 6;
+}
+
+.span-cols-7 {
+  grid-column: span 7;
+}
+
+.span-cols-8 {
+  grid-column: span 8;
+}
+
+.span-cols-9 {
+  grid-column: span 9;
+}
+
+.span-cols-10 {
+  grid-column: span 10;
+}
+
+
+.span-cols-11 {
+  grid-column: span 11;
+}
+
+.span-cols-12 {
+  grid-column: span 12;
+}
+
+/* Combinar filas */
+.span-rows-2 {
+  grid-row: span 2;
+}
+
+.span-rows-3 {
+  grid-row: span 3;
+}
+
+.span-rows-4 {
+  grid-row: span 4;
+}
+
+.grid-table.table-examen-motor-parte-1 {
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(7, auto);
+}
+
+.grid-table.table-examen-motor-parte-2 {
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(6, auto);
+}
+
+.grid-table.table-examen-refractivo-keratometria {
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(12, auto);
+}
+
+.table-examen-oftalmoscopia{
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, auto);
+  
+}
+
+.table-examen-formula{
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, auto);
+}
+
+.table-examen-diagnostico{
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, auto);
+}
+
+/* Estilos para headers principales (azul oscuro) */
+.background-azul {
+  background-color: var(--blue-color);
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilos para botones en headers de grid */
+.background-azul .btn {
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  border-radius: 3px;
+  min-width: 24px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.background-azul .btn i {
+  font-size: 0.6rem;
+}
+
+/* Botón flotante para toggle en tablas */
+.floating-toggle-btn {
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.floating-toggle-btn .btn {  
+  margin-bottom: 10px;
+  background: #ebebeb;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  border-radius: 3px;
+  min-width: 24px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floating-toggle-btn .btn i {
+  font-size: 0.6rem;
+}
+
+/* Contenedor de tabla con posición relativa para el botón flotante */
+.grid-table {
+  position: relative;
+}
+
+/* Estilos para sub-headers (azul claro) */
+.background-azul-claro {
+  background-color: var(--blue-clear-color) !important;
+  color: var(--blue-color) !important;
+  font-weight: bold;
+}
+
+/* Filas */
+.row-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Columnas */
+.col-flex {
+  flex: 1;                /* cada columna ocupa el mismo espacio */
+  display: flex;          /* para distribuir los .field-flex dentro */
+  gap: 16px;              /* espacio entre campos */
+  flex-direction: column;
+}
+
+/* Campos */
+.field-flex {
+  flex: 1;                /* cada campo ocupa el mismo ancho dentro de la columna */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  color: #000 !important;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.card-header:hover {
+  background-color: #e9ecef;
+}
+
+.card-header h5 {
+  margin: 0;
+}
+
+.card-header i {
+  margin-right: 8px;
+  transition: transform 0.2s;
+}
+
+.form-check {
+  margin-bottom: 8px;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--dark-color);
+  margin-bottom: 4px;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn {
+  border-radius: 6px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+  background-color: #5c636a;
+  border-color: #565e64;
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-info {
+  color: var(--info-color);
+  border-color: var(--info-color);
+}
+
+.btn-outline-info:hover {
+  background-color: var(--info-color);
+  border-color: var(--info-color);
+}
+
+.table th {
+  background-color: var(--light-color);
+  border-top: none;
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.text-muted {
+  color: var(--secondary-color) !important;
+}
+
+/* Animaciones para secciones desplegables */
+.card-body {
+  transition: all 0.3s ease;
+}
+
+/* Estilos para campos numéricos */
+input[type="number"] {
+  text-align: right;
+}
+
+/* Estilos para campos de lensometría */
+.lensometria-field {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+}
+
+.lensometria-field:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.lensometria-field.invalid {
+  border-color: var(--error-color);
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Estilos para campos de eje */
+.eje-field {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+}
+
+.eje-field:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.eje-field.invalid {
+  border-color: var(--error-color);
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Estilos para textareas */
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Estilos para tablas con divs - Clases reutilizables */
+.table-container {
+  border: 1px solid var(--secondary-color);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+/* Contenedor responsive para tablas con scroll lateral */
+.table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.table-responsive-container .table-container {
+  min-width: max-content;
+  width: 100%;
+}
+
+.table-responsive-container .agudeza-table {
+  min-width: max-content;
+  width: 100%;
+}
+
+.table-responsive-container .grid-table {
+  min-width: max-content;
+  width: 100%;
+}
+
+/* Scroll lateral para sección de examen refractivo */
+.card-body:has(.table-examen-refractivo-keratometria) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary-color) transparent;
+}
+
+.card-body:has(.table-examen-refractivo-keratometria)::-webkit-scrollbar {
+  height: 8px;
+}
+
+.card-body:has(.table-examen-refractivo-keratometria)::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.card-body:has(.table-examen-refractivo-keratometria)::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 4px;
+}
+
+.card-body:has(.table-examen-refractivo-keratometria)::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+.table-examen-refractivo-keratometria {
+  min-width: max-content;
+  width: 100%;
+}
+
+/* Estilos para mejorar la experiencia del scroll */
+.table-responsive-container {
+  -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--secondary-color) transparent; /* Firefox */
+}
+
+.table-responsive-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-responsive-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-responsive-container::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 4px;
+}
+
+.table-responsive-container::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+.table-title {
+  background-color: var(--blue-color);
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilos para botones en títulos de tablas */
+.table-title .btn {
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  border-radius: 3px;
+  min-width: 24px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-title .btn i {
+  font-size: 0.6rem;
+}
+
+.table-header {
+  display: flex;
+  background-color: rgba(0, 123, 255, 0.1);
+  color: var(--blue-color);
+  font-weight: bold;
+  border-bottom: 1px solid var(--secondary-color);
+}
+
+.table-header-cell {
+  flex: 1;
+  padding: 8px 12px;
+  text-align: center;
+  border-right: 1px solid var(--secondary-color);
+  font-size: 0.9rem;
+}
+
+.table-header-cell:last-child {
+  border-right: none;
+}
+
+.table-row {
+  display: flex;
+  border-bottom: 1px solid var(--secondary-color);
+  background-color: white;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-cell {
+  flex: 1;
+  padding: 8px 12px;
+  border-right: 1px solid var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.table-cell:last-child {
+  border-right: none;
+}
+
+.table-cell-label {
+  font-weight: bold;
+  color: var(--dark-color);
+}
+
+.table-cell-input {
+  border: none;
+  background: transparent;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  width: 100%;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+}
+
+.table-cell-input:focus {
+  outline: none;
+  background: white;
+  border: 1px solid var(--primary-color);
+  border-radius: 0.25rem;
+}
+
+.table-cell-text {
+  color: var(--secondary-color);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.table-cell-prefix {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+}
+
+.table-cell-prefix .prefix {
+  background-color: var(--light-color);
+  border: 1px solid var(--secondary-color);
+  border-right: none;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+  border-radius: 0.25rem 0 0 0.25rem;
+  white-space: nowrap;
+  font-family: 'Courier New', monospace;
+}
+
+.table-cell-suffix {
+  border: 1px solid var(--secondary-color);
+  border-left: none;
+  border-radius: 0 0.25rem 0.25rem 0;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  flex: 1;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+}
+
+.table-cell-suffix:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+
+/* Estilos para checkboxes */
+.form-check-input {
+  margin-top: 0.25em;
+}
+
+/* Estilos para el header */
+.container-fluid .row:first-child {
+  background-color: #f8f9fa;
+  padding: 20px 0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* Estilos para la tabla vacía */
+.text-center i.fa-file-medical {
+  color: #dee2e6;
+}
+
+/* Estilos para la tabla de agudeza visual */
+.color-azul {
+  background-color: var(--blue-color) !important;
+  color: white !important;
+  font-weight: bold;
+  text-align: center;
+  padding: 12px 8px;
+  border: 1px solid var(--blue-color);
+}
+
+.color-azul-medio {
+  background-color: rgba(0, 123, 255, 0.1) !important;
+  color: var(--blue-color) !important;
+  font-weight: bold;
+  text-align: center;
+  padding: 8px;
+  border: 1px solid var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Estilos para botones de toggle en tablas */
+.agudeza-cell .btn {
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  border-radius: 3px;
+  min-width: 24px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agudeza-cell .btn i {
+  font-size: 0.6rem;
+}
+
+/* Estilos para la tabla convertida a divs */
+.agudeza-table {
+  border: 1px solid var(--secondary-color);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.agudeza-row {
+  display: flex;
+  border-bottom: 1px solid var(--secondary-color);
+}
+
+.agudeza-row:last-child {
+  border-bottom: none;
+}
+
+.agudeza-cell {
+  padding: 8px;
+  border-right: 1px solid var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.agudeza-cell:last-child {
+  border-right: none;
+}
+
+.card-body input {
+  width: 100%;
+  border: 1px solid var(--secondary-color);
+  border-radius: 0.25rem;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.card-body input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para los gráficos de versiones */
+.versiones-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.versiones-grafico {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.versiones-svg {
+  background: transparent;
+}
+
+.versiones-v {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  fill: var(--success-color);
+  cursor: pointer;
+  user-select: none;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  transition: all 0.2s ease;
+}
+
+.versiones-v:hover {
+  fill: var(--primary-color);
+  font-size: 18px;
+}
+
+.versiones-v:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  fill: var(--primary-color);
+  font-size: 18px;
+}
+
+.versiones-v.editing {
+  fill: var(--error-color);
+  font-size: 18px;
+}
+
+/* Estilos específicos para las tablas de EXAMEN REFRACTIVO */
+.table-examen-refractivo-keratometria {
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(3, auto);
+}
+
+.table-examen-refractivo-retinoscopia-estatica {
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(3, auto);
+}
+
+.table-examen-refractivo-retinoscopia-dinamica {
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(3, auto);
+}
+
+.table-examen-refractivo-otra-refraccion {
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(3, auto);
+}
+
+.table-examen-refractivo-radio-k {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+}
+
+.table-examen-refractivo-subjetivo {
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(4, auto);
+}
+
+.table-examen-refractivo-av-retinoscopia {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, auto);
+}
+
+/* Estilos para headers de secciones */
+.section-header {
+  cursor: pointer;
+  background-color: var(--blue-color) !important;
+  color: white !important;
+}
+
+/* Responsive específico para el componente de historias clínicas */
+@media (max-width: 768px) {
+  .card-header h5 {
+    font-size: 1rem;
+  }
+  
+  .btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+

@@ -1,0 +1,19 @@
+# Permitir acceso a archivos de imagen
+<FilesMatch "\.(jpg|jpeg|png|gif)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Denegar acceso a archivos PHP y otros tipos peligrosos
+<FilesMatch "\.(php|phtml|php3|php4|php5|pl|py|jsp|asp|sh|cgi)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Configuración de headers para imágenes
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpg|jpeg|png|gif)$">
+        Header set Cache-Control "public, max-age=31536000"
+        Header set Content-Type "image/jpeg"
+    </FilesMatch>
+</IfModule>

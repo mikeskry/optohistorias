@@ -1,0 +1,65 @@
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Panel de Control</h5>
+          <p class="card-text">
+            Bienvenido al sistema de gestión ÓpticaCast. Selecciona una opción para continuar.
+          </p>
+          
+          <!-- Tarjetas de gestión -->
+          <div class="row mt-4">
+            <!-- Módulo de Ópticas - Solo para Administradores -->
+            <div class="col-md-4 mb-3" *ngIf="isAdmin">
+              <div class="card text-center border-primary dashboard-card">
+                <div class="card-body">
+                  <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                  <h6>Gestión de Ópticas</h6>
+                  <p class="text-muted">Crear, editar y gestionar cuentas de ópticas</p>
+                  <a routerLink="/opticas" class="btn btn-primary btn-sm">Acceder</a>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Módulo de Pacientes - Solo para Ópticas -->
+            <div class="col-md-4 mb-3" *ngIf="!isAdmin">
+              <div class="card text-center border-success dashboard-card">
+                <div class="card-body">
+                  <i class="fas fa-users fa-3x text-success mb-3"></i>
+                  <h6>Gestión de Pacientes</h6>
+                  <p class="text-muted">Gestionar pacientes y sus historias clínicas</p>
+                  <a routerLink="/pacientes" class="btn btn-success btn-sm">Acceder</a>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Módulo de Citas - Solo para Ópticas -->
+            <div class="col-md-4 mb-3" *ngIf="!isAdmin">
+              <div class="card text-center border-info dashboard-card">
+                <div class="card-body">
+                  <i class="fas fa-calendar-alt fa-3x text-info mb-3"></i>
+                  <h6>Gestión de Citas</h6>
+                  <p class="text-muted">Programar y gestionar citas médicas</p>
+                  <a routerLink="/citas" class="btn btn-blue-clear btn-sm">Acceder</a>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Módulo de Reportes - Para todos los usuarios -->
+            <div class="col-md-4 mb-3">
+              <div class="card text-center border-warning dashboard-card">
+                <div class="card-body">
+                  <i class="fas fa-chart-bar fa-3x text-warning mb-3"></i>
+                  <h6>Reportes</h6>
+                  <p class="text-muted">Generar reportes de historias clínicas en Excel</p>
+                  <a routerLink="/reportes" class="btn btn-yellow btn-sm">Acceder</a>
+                </div>
+              </div>
+            </div>
+          </div>       
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

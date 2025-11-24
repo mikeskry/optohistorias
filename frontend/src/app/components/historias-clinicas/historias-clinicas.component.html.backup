@@ -1,0 +1,1187 @@
+<div class="container-fluid">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2>Historias Clínicas</h2>
+          @if (pacienteNombre) {
+            <p class="text-muted mb-0">Paciente: {{ pacienteNombre }}</p>
+          }
+        </div>
+        <div>
+          <button class="btn btn-secondary me-2" (click)="volverAPacientes()">
+            <i class="fas fa-arrow-left"></i> Volver a Pacientes
+          </button>
+          <button class="btn btn-primary" (click)="showCreateFormModal()">
+            <i class="fas fa-plus"></i> Nueva Historia Clínica
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de Historias Clínicas -->
+  @if (!showCreateForm) {
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+            @if (historias.length > 0) {
+              <div class="historias-container">
+                <!-- Header -->
+                <div class="historias-header">
+                  <div class="historia-cell">Fecha Consulta</div>
+                  <div class="historia-cell">Motivo Consulta</div>
+                  <div class="historia-cell">Acciones</div>
+                </div>
+                
+                <!-- Rows -->
+                @for (historia of historias; track historia.id) {
+                  <div class="historia-row" (click)="editHistoria(historia)">
+                    <div class="historia-cell fecha-cell">
+                      <i class="fas fa-calendar-alt me-2"></i>
+                      {{ historia.fecha_consulta | date:'dd/MM/yyyy' }}
+                    </div>
+                    <div class="historia-cell motivo-cell">
+                      <i class="fas fa-stethoscope me-2"></i>
+                      {{ historia.motivo_consulta || 'Sin motivo especificado' }}
+                    </div>
+                    <div class="historia-cell acciones-cell">
+                      <button class="btn btn-sm btn-outline-primary me-2" (click)="editHistoria(historia); $event.stopPropagation()">
+                        <i class="fas fa-eye"></i> Ver
+                      </button>
+                      <button class="btn btn-sm btn-outline-success" (click)="generatePDF(historia); $event.stopPropagation()">
+                        <i class="fas fa-file-pdf"></i> PDF
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+            @if (historias.length === 0) {
+              <div class="empty-state">
+            <i class="fas fa-file-medical fa-4x mb-4"></i>
+            <h4>No hay historias clínicas</h4>
+            <p>Este paciente aún no tiene historias clínicas registradas.</p>
+            <button class="btn btn-primary btn-lg" (click)="showCreateFormModal()">
+              <i class="fas fa-plus"></i> Crear Primera Historia Clínica
+            </button>
+          </div>
+            }
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Formulario de Historia Clínica -->
+  @if (showCreateForm) {
+    <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4>{{ editingHistoriaId ? 'Ver' : 'Nueva' }} Historia Clínica</h4>
+            @if (editingHistoriaId) {
+              <button class="btn btn-success" (click)="generatePDFFromView()">
+                <i class="fas fa-file-pdf"></i> Generar PDF
+              </button>
+            }
+          </div>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="historiaForm" (ngSubmit)="saveHistoria()" (keydown.enter)="onKeyDown($event)">
+            
+            <!-- DATOS INFORMATIVOS DEL PACIENTE -->
+            <div class="card mb-4">
+              <div class="card-header section-header bg-info text-white" (click)="toggleSeccion('datosPaciente')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['datosPaciente']" [class.fa-chevron-right]="!seccionesDesplegadas['datosPaciente']"></i>
+                  <i class="fas fa-user ms-2"></i>
+                  DATOS DEL PACIENTE (Solo Consulta)
+                </h5>
+              </div>
+              @if (seccionesDesplegadas['datosPaciente']) {
+                <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Nombre</label>
+                      <input type="text" class="form-control" [value]="paciente?.nombre || ''" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Apellidos</label>
+                      <input type="text" class="form-control" [value]="paciente?.apellidos || ''" readonly>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Tipo de Documento</label>
+                      <input type="text" class="form-control" [value]="paciente?.tipo_documento || ''" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Número de Documento</label>
+                      <input type="text" class="form-control" [value]="paciente?.documento || ''" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Fecha de Nacimiento</label>
+                      <input type="text" class="form-control" [value]="paciente?.fecha_nacimiento ? (paciente?.fecha_nacimiento | date:'dd/MM/yyyy') : ''" readonly>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Edad</label>
+                      <input type="text" class="form-control" [value]="calcularEdad(paciente?.fecha_nacimiento)" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Género</label>
+                      <input type="text" class="form-control" [value]="paciente?.genero || ''" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">RH</label>
+                      <input type="text" class="form-control" [value]="paciente?.rh || ''" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Teléfono</label>
+                      <input type="text" class="form-control" [value]="paciente?.telefono || ''" readonly>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Correo Electrónico</label>
+                      <input type="email" class="form-control" [value]="paciente?.email || ''" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group mb-3">
+                      <label class="form-label text-muted">Acudiente</label>
+                      <input type="text" class="form-control" [value]="paciente?.nombre_acudiente || ''" readonly>
+                    </div>
+                  </div>
+                </div>
+                  
+                </div>
+              }
+            </div>
+            
+            <!-- CUESTIONARIO -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('cuestionario')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['cuestionario']" [class.fa-chevron-right]="!seccionesDesplegadas['cuestionario']"></i>
+                  CUESTIONARIO
+                </h5>
+              </div>
+                @if (seccionesDesplegadas['cuestionario']) {
+                  <div class="card-body">
+
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                    <label class="form-label">Motivo de Consulta</label>
+                    <input type="text" class="form-control" formControlName="motivo_consulta">
+              </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                    <label class="form-label">Tipo de Examen</label>
+                    <input type="text" class="form-control" formControlName="tipo_examen">
+              </div>
+            </div>
+                    </div>
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                    <label class="form-label">Anamnesis</label>
+                          <textarea class="form-control" formControlName="anamnesis" rows="4"></textarea>
+              </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                    <label class="form-label">Ultima Valoración de Optometría</label>
+                          <input type="text" class="form-control" formControlName="ultima_valoracion_optometria">
+                      </div>
+                        <div class="field-flex">
+                    <label class="form-label">Ocupación/Profesión/Actividades</label>
+                          <input type="text" class="form-control" formControlName="ocupacion_profesion">
+                      </div>
+                    </div>
+                    </div> 
+                <!-- Antecedentes -->
+                <div class="card">
+                      <div class="card-header">
+                    <h6 class="mb-0">Antecedentes</h6>
+                      </div>
+                  <div class="card-body">
+                        <div class="row-flex">
+                          <div class="col-flex">
+                            <div class="field-flex">
+                              <label class="form-label">Familiares</label>
+                              <input type="text" class="form-control" formControlName="antecedentes_familiares">
+                  </div>
+                </div>
+                          <div class="col-flex">
+                            <div class="field-flex">
+                              <label class="form-label">Personales</label>
+                              <input type="text" class="form-control" formControlName="antecedentes_personales">
+              </div>
+                          </div>
+                          <div class="col-flex">
+                            <div class="field-flex">
+                              <label class="form-label">Laborales</label>
+                              <input type="text" class="form-control" formControlName="antecedentes_laborales">
+                            </div>
+                          </div>
+                        </div>                        
+                      </div>
+                    </div>
+                  </div>
+                }
+            </div>
+
+            <!-- LENSOMETRÍA -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('lensometria')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['lensometria']" [class.fa-chevron-right]="!seccionesDesplegadas['lensometria']"></i>
+                  LENSOMETRÍA
+                </h5>
+              </div>
+                @if (seccionesDesplegadas['lensometria']) {
+                  <div class="card-body">
+                    <!-- Formula de Lejos -->
+                    <div class="table-responsive-container">
+                      <div class="table-container">
+                      <div class="table-title">
+                        FORMULA
+                        <button type="button" class="btn btn-sm btn-outline-secondary ms-2" 
+                                (click)="toggleFila('lensometriaFormulaCerca')" 
+                                title="Mostrar/Ocultar Fórmula de Cerca">
+                          <i class="fas" [class.fa-plus]="!isFilaVisible('lensometriaFormulaCerca')" 
+                             [class.fa-minus]="isFilaVisible('lensometriaFormulaCerca')"></i>
+                        </button>
+                      </div>
+                      <div class="table-header">
+                        <div class="table-header-cell">LATERALIDAD</div>
+                        <div class="table-header-cell">ESFERA</div>
+                        <div class="table-header-cell">CILINDRO</div>
+                        <div class="table-header-cell">EJE</div>
+                        <div class="table-header-cell">ADICIÓN</div>
+                        <div class="table-header-cell">PRISMA</div>
+                      </div>
+                    
+                      <!-- Fila Derecho -->
+                      <div class="table-row">
+                        <div class="table-cell">
+                          <span class="table-cell-label">Derecho</span>
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_lejos_derecho_esfera" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_lejos_derecho_cilindro" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input eje-field" formControlName="lensometria_formula_lejos_derecho_eje" 
+                                 pattern="^\d+$" 
+                                 (blur)="formatEjeField($event)"
+                                 (input)="validateEjeField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_lejos_derecho_adicion" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input" formControlName="lensometria_formula_lejos_derecho_prisma" value="NO APLICA">
+                      </div>
+                    </div>
+
+                      <!-- Fila Izquierdo -->
+                      <div class="table-row">
+                        <div class="table-cell">
+                          <span class="table-cell-label">Izquierdo</span>
+                  </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_lejos_izquierdo_esfera" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_lejos_izquierdo_cilindro" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+              </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input eje-field" formControlName="lensometria_formula_lejos_izquierdo_eje" 
+                                 pattern="^\d+$" 
+                                 (blur)="formatEjeField($event)"
+                                 (input)="validateEjeField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_lejos_izquierdo_adicion" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input" formControlName="lensometria_formula_lejos_izquierdo_prisma" value="NO APLICA">
+                        </div>
+                      </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Formula de Cerca -->
+                    @if (isFilaVisible('lensometriaFormulaCerca')) {
+                    <div class="table-responsive-container">
+                      <div class="table-container">
+                      <div class="table-title">FORMULA DE CERCA O ADICIONAL</div>
+                      <div class="table-header">
+                        <div class="table-header-cell">LATERALIDAD</div>
+                        <div class="table-header-cell">ESFERA</div>
+                        <div class="table-header-cell">CILINDRO</div>
+                        <div class="table-header-cell">EJE</div>
+                        <div class="table-header-cell">ADICIÓN</div>
+                      </div>
+                      
+                      <!-- Fila Derecho -->
+                      <div class="table-row">
+                        <div class="table-cell">
+                          <span class="table-cell-label">Derecho</span>
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_cerca_derecho_esfera" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_cerca_derecho_cilindro" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input eje-field" formControlName="lensometria_formula_cerca_derecho_eje" 
+                                 pattern="^\d+$" 
+                                 (blur)="formatEjeField($event)"
+                                 (input)="validateEjeField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_cerca_derecho_adicion" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                      </div>
+                      
+                      <!-- Fila Izquierdo -->
+                      <div class="table-row">
+                        <div class="table-cell">
+                          <span class="table-cell-label">Izquierdo</span>
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_cerca_izquierdo_esfera" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_cerca_izquierdo_cilindro" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input eje-field" formControlName="lensometria_formula_cerca_izquierdo_eje" 
+                                 pattern="^\d+$" 
+                                 (blur)="formatEjeField($event)"
+                                 (input)="validateEjeField($event)">
+                        </div>
+                        <div class="table-cell">
+                          <input type="text" class="table-cell-input lensometria-field" formControlName="lensometria_formula_cerca_izquierdo_adicion" 
+                                 pattern="^[+-]?(\d+\.?\d{0,2}|\.\d{1,2})$" 
+                                 (blur)="formatLensometriaField($event)"
+                                 (input)="validateLensometriaField($event)">
+                        </div>
+                      </div>
+                      </div>
+                    </div>
+                    }
+                    
+                    <!-- Observaciones -->
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Observaciones</label>
+                          <textarea class="form-control" formControlName="lensometria_observaciones" rows="4"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+            </div>
+
+            <!-- AGUDEZA VISUAL -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('agudezaVisual')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['agudezaVisual']" [class.fa-chevron-right]="!seccionesDesplegadas['agudezaVisual']"></i>
+                  AGUDEZA VISUAL
+                </h5>
+              </div>
+                @if (seccionesDesplegadas['agudezaVisual']) {
+                  <div class="card-body">
+                    <!-- Tabla de Agudeza Visual convertida a divs -->
+                    <div class="table-responsive-container">
+                      <div class="agudeza-table">
+                      <!-- Fila 1: Headers principales -->
+                      <div class="agudeza-row">
+                        <div class="agudeza-cell color-azul" style="flex: 2;">Test Usado</div>
+                        <div class="agudeza-cell color-azul" style="flex: 4;">Agudeza Visual Lejos</div>
+                        <div class="agudeza-cell color-azul" style="flex: 3;">Agudeza Visual Cerca</div>
+                      </div>
+                      
+                      <!-- Fila 2: Sub-headers -->
+                      <div class="agudeza-row">
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Distancia</div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Descripción</div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Lateralidad</div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Derecho</div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Izquierdo</div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Ambos</div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Derecho</div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Izquierdo</div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Observación</div>
+                      </div>
+
+                      <!-- Fila 3: Lejos LETRAS Sin Corrección -->
+                      <div class="agudeza-row">
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Lejos</div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="lejos_test_usado" value="LETRAS">
+                        </div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">
+                          Sin Corrección
+                          <button type="button" class="btn btn-sm btn-outline-secondary ms-2" 
+                                  (click)="toggleFila('agudezaVisualConCorreccion')" 
+                                  title="Mostrar/Ocultar fila Con Corrección">
+                            <i class="fas" [class.fa-plus]="!isFilaVisible('agudezaVisualConCorreccion')" 
+                               [class.fa-minus]="isFilaVisible('agudezaVisualConCorreccion')"></i>
+                          </button>
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="sin_correccion_lejos_derecho" value="20/25" appPrefixInput="20/">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="sin_correccion_lejos_izquierdo" value="20/30" appPrefixInput="20/">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="sin_correccion_lejos_ambos" value="20/" appPrefixInput="20/">
+                      </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="sin_correccion_cerca_derecho" value="M">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="sin_correccion_cerca_izquierdo" value="M">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="sin_correccion_cerca_observacion">
+                        </div>
+                      </div>
+                      
+                      <!-- Fila 4: Lejos LETRAS Con Corrección -->
+                      @if (isFilaVisible('agudezaVisualConCorreccion')) {
+                      <div class="agudeza-row">
+                        <div class="agudeza-cell" style="flex: 1;"></div>
+                        <div class="agudeza-cell" style="flex: 1;"></div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Con Corrección</div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="con_correccion_lejos_derecho" value="20/" appPrefixInput="20/">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="con_correccion_lejos_izquierdo" value="20/" appPrefixInput="20/">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="con_correccion_lejos_ambos" value="20/" appPrefixInput="20/">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="con_correccion_cerca_derecho" value="M">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="con_correccion_cerca_izquierdo" value="M">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="con_correccion_cerca_observacion">
+                        </div>
+                      </div>
+                      }
+                      
+                      <!-- Fila 5: Cerca LETRAS Pin Hole -->
+                      <div class="agudeza-row">
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Cerca</div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="cerca_test_usado" value="LETRAS">
+                        </div>
+                        <div class="agudeza-cell color-azul-medio" style="flex: 1;">Pin Hole</div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="pin_hole_lejos_derecho" value="20/" appPrefixInput="20/">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;">
+                          <input type="text" class="agudeza-cell-input" formControlName="pin_hole_lejos_izquierdo" value="20/" appPrefixInput="20/">
+                        </div>
+                        <div class="agudeza-cell" style="flex: 1;"></div>
+                        <div class="agudeza-cell" style="flex: 1;"></div>
+                        <div class="agudeza-cell" style="flex: 1;"></div>
+                        <div class="agudeza-cell" style="flex: 1;"></div>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+                </div>
+
+            <!-- EXAMEN MOTOR -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('examenMotor')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['examenMotor']" [class.fa-chevron-right]="!seccionesDesplegadas['examenMotor']"></i>
+                  EXAMEN MOTOR
+                </h5>
+                </div>
+                @if (seccionesDesplegadas['examenMotor']) {
+                  <div class="card-body">
+                    <div class="table-responsive-container">
+                      <div class="grid-table table-examen-motor-parte-1">
+                      <!-- Fila 1 -->
+                      <div class="cell span-rows-2 background-azul">Dominancia</div>
+                      <div class="cell background-azul-claro">Mano</div>
+                      <div class="cell background-azul-claro">Ojo</div>
+                      <div class="cell background-azul">Punto Próximo de Convergencia</div>
+                      <div class="cell span-rows-2 background-azul">D.P.</div>
+                      <div class="cell background-azul-claro">Lejos</div>
+                      <div class="cell background-azul-claro">Cerca</div>
+                    
+                       <!-- Fila 2 -->
+                       <div class="cell"><input type="text" formControlName="examen_motor_mano_dominante" value="DERECHA" /></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_ojo_dominante" value="DERECHO" /></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_punto_proximo_valor" /></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_dp_lejos" value="30/30"/></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_dp_cerca" value="30/30"/></div>
+                    
+                      <!-- Fila 3 -->
+                      <div class="cell"></div>
+                      <div class="cell span-cols-3 background-azul-claro">Ojo derecho</div>
+                      <div class="cell span-cols-3  background-azul-claro">Ojo izquierdo</div>
+                    
+                      <!-- Fila 4 -->
+                      <div class="cell background-azul">Ducciones</div>
+                      <div class="cell span-cols-3"><input type="text" formControlName="examen_motor_ducciones_derecho" value="Normal" /></div>
+                      <div class="cell span-cols-3"><input type="text" formControlName="examen_motor_ducciones_izquierdo" value="Normal" /></div>
+                    
+                      <!-- Fila 5 -->
+                      <div class="cell span-rows-2 background-azul">KAPPA</div>
+                      <div class="cell span-cols-3 background-azul-claro">Ojo derecho</div>
+                      <div class="cell span-cols-3 background-azul-claro">Ojo izquierdo</div>
+                    
+                      <!-- Fila 6 -->
+                      <div class="cell span-cols-3"><input type="text" formControlName="examen_motor_kappa_derecho" value="0°" /></div>
+                      <div class="cell span-cols-3"><input type="text" formControlName="examen_motor_kappa_izquierdo" value="0°" /></div>
+                      <!-- Fila 7 -->
+                      <div class="cell background-azul-claro">Versiones</div>
+                      <div class="cell span-cols-3 background-azul-claro">Ojo derecho</div>
+                      <div class="cell span-cols-3 background-azul-claro">Ojo izquierdo</div>
+                      
+                      <!-- Fila 8 -->
+                      <div class="cell"></div>
+                      <div class="cell span-cols-3">
+                        <div class="versiones-grafico">
+                          <!-- Gráfico Ojo Derecho -->
+                          <svg width="312" height="104" viewBox="0 0 312 104" class="versiones-svg">
+                            <!-- Líneas del gráfico -->
+                            <line x1="26" y1="52" x2="286" y2="52" stroke="var(--dark-color)" stroke-width="2"/>
+                            <line x1="78" y1="26" x2="78" y2="78" stroke="var(--dark-color)" stroke-width="2"/>
+                            <line x1="234" y1="26" x2="234" y2="78" stroke="var(--dark-color)" stroke-width="2"/>
+                            
+                            <!-- Chulitos editables -->
+                            <text x="26" y="65" class="versiones-v" data-position="left" (click)="onVersionesVClick($event, 'derecho')" text-anchor="middle">✓</text>
+                            <text x="286" y="65" class="versiones-v" data-position="right" (click)="onVersionesVClick($event, 'derecho')" text-anchor="middle">✓</text>
+                            <text x="78" y="15" class="versiones-v" data-position="top-left" (click)="onVersionesVClick($event, 'derecho')" text-anchor="middle">✓</text>
+                            <text x="78" y="89" class="versiones-v" data-position="bottom-left" (click)="onVersionesVClick($event, 'derecho')" text-anchor="middle">✓</text>
+                            <text x="234" y="15" class="versiones-v" data-position="top-right" (click)="onVersionesVClick($event, 'derecho')" text-anchor="middle">✓</text>
+                            <text x="234" y="89" class="versiones-v" data-position="bottom-right" (click)="onVersionesVClick($event, 'derecho')" text-anchor="middle">✓</text>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="cell span-cols-3">
+                        <div class="versiones-grafico">
+                          <!-- Gráfico Ojo Izquierdo -->
+                          <svg width="312" height="104" viewBox="0 0 312 104" class="versiones-svg">
+                            <!-- Líneas del gráfico -->
+                            <line x1="26" y1="52" x2="286" y2="52" stroke="var(--dark-color)" stroke-width="2"/>
+                            <line x1="78" y1="26" x2="78" y2="78" stroke="var(--dark-color)" stroke-width="2"/>
+                            <line x1="234" y1="26" x2="234" y2="78" stroke="var(--dark-color)" stroke-width="2"/>
+                            
+                            <!-- Chulitos editables -->
+                            <text x="26" y="65" class="versiones-v" data-position="left" (click)="onVersionesVClick($event, 'izquierdo')" text-anchor="middle">✓</text>
+                            <text x="286" y="65" class="versiones-v" data-position="right" (click)="onVersionesVClick($event, 'izquierdo')" text-anchor="middle">✓</text>
+                            <text x="78" y="15" class="versiones-v" data-position="top-left" (click)="onVersionesVClick($event, 'izquierdo')" text-anchor="middle">✓</text>
+                            <text x="78" y="89" class="versiones-v" data-position="bottom-left" (click)="onVersionesVClick($event, 'izquierdo')" text-anchor="middle">✓</text>
+                            <text x="234" y="15" class="versiones-v" data-position="top-right" (click)="onVersionesVClick($event, 'izquierdo')" text-anchor="middle">✓</text>
+                            <text x="234" y="89" class="versiones-v" data-position="bottom-right" (click)="onVersionesVClick($event, 'izquierdo')" text-anchor="middle">✓</text>
+                          </svg>
+                        </div>                        
+                      </div>
+                       
+                      <!-- Fila 9 -->
+                      <div class="cell background-azul">Hirschberg</div>
+                      <div class="cell span-cols-6"><input type="text" formControlName="examen_motor_hirschberg" value="CENTRADO AMBOS OJOS" /></div>
+                      </div>
+                    </div>
+                    <div class="table-responsive-container">
+                      <div class="grid-table table-examen-motor-parte-2">
+                      <!-- Fila 1 -->
+                      <div class="cell span-cols-2 background-azul">Medición de Desviación</div>
+                      <div class="cell span-cols-3 background-azul">Con corrección</div>
+                      <div class="cell span-cols-2 background-azul">Sin corrección</div>
+                      <div class="cell background-azul">Observación</div>
+                      <!-- Fila 2 -->
+                      <div class="cell span-rows-3 background-azul-claro">Test Utilizado</div>
+                      <div class="cell span-rows-3"><input type="text" formControlName="examen_motor_test_utilizado" value="COVER TEST PRISMA" /></div>
+                      <div class="cell background-azul-claro">Distancia</div>
+                      <div class="cell background-azul-claro">Horizontal</div>
+                      <div class="cell background-azul-claro">Vertical</div>
+                      <div class="cell background-azul-claro">Horizontal</div>
+                      <div class="cell background-azul-claro">Vertical</div>
+                      <div class="cell span-rows-3"><input type="text" formControlName="examen_motor_observaciones" value="TOMADO CON OBJETO REAL" /></div>
+                       <!-- Fila 3 -->
+                       <div class="cell background-azul-claro">6 Metros</div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_cover_test_con_correccion_horizontal" value="ORTHO" /></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_cover_test_con_correccion_vertical" value="ORTHO" /></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_cover_test_sin_correccion_horizontal" value="ORTHO" /></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_cover_test_sin_correccion_vertical" value="ORTHO" /></div>
+                       <!-- Fila 4 -->
+                       <div class="cell background-azul-claro">30 A 40 cms</div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_prisma_con_correccion_horizontal" value="ORTHO" /></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_prisma_con_correccion_vertical" value="ORTHO" /></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_prisma_sin_correccion_horizontal" value="ORTHO" /></div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_prisma_sin_correccion_vertical" value="ORTHO" /></div>
+                       <!-- Fila 5 -->
+                       <div class="cell span-cols-2 background-azul">Test de Color</div>
+                       <div class="cell background-azul-claro">Ojo Derecho</div>
+                       <div class="cell span-cols-2"><input type="text" formControlName="examen_motor_por_confirmar_derecho" value="POR CONFIRMAR" /></div>
+                       <div class="cell background-azul-claro">Ojos Izquierdo</div>
+                       <div class="cell span-cols-2"><input type="text" formControlName="examen_motor_por_confirmar_izquierdo" value="POR CONFIRMAR" /></div>
+                       <!-- Fila 6 -->
+                       <div class="cell background-azul">Estereopsis</div>
+                       <div class="cell background-azul-claro">Tipo de Test</div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_estereopsis_tipo" value="TIMUS" /></div>
+                       <div class="cell span-cols-2 background-azul-claro">Resultado</div>
+                       <div class="cell"><input type="text" formControlName="examen_motor_estereopsis_resultado" value="-" /></div>
+                       <div class="cell span-cols-2 background-azul-claro">Segundos de Arco</div>
+                      </div>
+                    </div>
+
+                  </div>
+                }
+            </div>
+
+            <!-- EXAMEN REFRACTIVO -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('examenRefractivo')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['examenRefractivo']" [class.fa-chevron-right]="!seccionesDesplegadas['examenRefractivo']"></i>
+                  EXAMEN REFRACTIVO
+                </h5>
+              </div>
+                @if (seccionesDesplegadas['examenRefractivo']) {
+                  <div class="card-body">
+                    <div class="table-responsive-container">
+                      <div class="grid-table table-examen-refractivo-keratometria">
+
+                      <div class="cell span-cols-6 background-azul">Keratometría</div>
+                      <div class="cell span-cols-6 background-azul">Retinoscopia Estatica</div>
+                      
+                      <div class="cell background-azul-claro">Lateralidad</div>
+                      <div class="cell background-azul-claro">Plano</div>
+                      <div class="cell background-azul-claro">Curvo</div>
+                      <div class="cell background-azul-claro">Eje</div>
+                      <div class="cell background-azul-claro">Miras</div>
+                      <div class="cell span-cols-2 background-azul-claro">Corn.</div>
+                      <div class="cell background-azul-claro">Lateralidad</div>
+                      <div class="cell background-azul-claro">Esfera</div>
+                      <div class="cell background-azul-claro">Cilindro</div>
+                      <div class="cell background-azul-claro">Eje</div>
+                      <div class="cell background-azul-claro">Sombras</div>
+
+                      <div class="cell background-azul-claro">Derecho</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_keratometria_derecho_plano" value="44.00" (blur)="formatKeratometriaOnBlur('examen_refractivo_keratometria_derecho_plano')" (keypress)="onKeratometriaKeyPress($event)" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_keratometria_derecho_curvo" value="48.00" (blur)="formatKeratometriaOnBlur('examen_refractivo_keratometria_derecho_curvo')" (keypress)="onKeratometriaKeyPress($event)" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_keratometria_derecho_eje" value="0" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_keratometria_derecho_miras" value="REDONDA" /></div>
+                      <div class="cell span-cols-2"><input type="text" formControlName="examen_refractivo_keratometria_derecho_corn" readonly /></div>
+                      <div class="cell background-azul-claro">Derecho</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_estatica_derecho_esfera" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_estatica_derecho_cilindro" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_estatica_derecho_eje" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_estatica_derecho_sombras" value="CLARO Y DEFINIDO" /></div>
+                    
+                      <div class="cell background-azul-claro">Izquierdo</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_keratometria_izquierdo_plano" value="43.00" (blur)="formatKeratometriaOnBlur('examen_refractivo_keratometria_izquierdo_plano')" (keypress)="onKeratometriaKeyPress($event)" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_keratometria_izquierdo_curvo" value="49.00" (blur)="formatKeratometriaOnBlur('examen_refractivo_keratometria_izquierdo_curvo')" (keypress)="onKeratometriaKeyPress($event)" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_keratometria_izquierdo_eje" value="0" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_keratometria_izquierdo_miras" value="REDONDA" /></div>
+                      <div class="cell span-cols-2"><input type="text" formControlName="examen_refractivo_keratometria_izquierdo_corn" readonly /></div>
+                      <div class="cell background-azul-claro">Izquierdo</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_estatica_izquierdo_esfera" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_estatica_izquierdo_cilindro" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_estatica_izquierdo_eje" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_estatica_izquierdo_sombras" value="CLARO Y DEFINIDO" /></div>
+                      
+                      <!-- Botón flotante para mostrar/ocultar Retinoscopia Dinamica y Otra Refracción -->
+                      <div class="floating-toggle-btn">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                (click)="toggleFila('examenRefractivoRetinoscopia')" 
+                                title="Mostrar/Ocultar Retinoscopia Dinamica y Otra Refracción">
+                          <i class="fas" [class.fa-plus]="!isFilaVisible('examenRefractivoRetinoscopia')" 
+                             [class.fa-minus]="isFilaVisible('examenRefractivoRetinoscopia')"></i>
+                        </button>
+                      </div>
+                      
+                      @if (isFilaVisible('examenRefractivoRetinoscopia')) {
+                        <div class="cell span-rows-2 background-azul-claro">Radio de K</div>
+                        <div class="cell span-cols-5 background-azul">Retinoscopia Dinamica</div>
+                        <div class="cell background-azul">Otra Refracción</div>
+                        <div class="cell span-cols-5"><input type="text" formControlName="examen_refractivo_otra_refraccion" value="" /></div>
+
+                        <div class="cell background-azul-claro">Lateralidad</div>
+                        <div class="cell background-azul-claro">Esfera</div>
+                        <div class="cell background-azul-claro">Cilindro</div>
+                        <div class="cell background-azul-claro">Eje</div>
+                        <div class="cell background-azul-claro">Sombras</div>
+                        <div class="cell background-azul-claro">Lateralidad</div>
+                        <div class="cell background-azul-claro">Esfera</div>
+                        <div class="cell background-azul-claro">Cilindro</div>
+                        <div class="cell background-azul-claro">Eje</div>
+                        <div class="cell span-cols-2 background-azul-claro">Sombras</div>
+                        
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_radio_k_1" value="7.67" /></div>
+                        <div class="cell background-azul-claro">Derecho</div> 
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_dinamica_derecho_esfera" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_dinamica_derecho_cilindro" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_dinamica_derecho_eje" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_dinamica_derecho_sombras" value="OMITIDA" /></div>
+                        <div class="cell background-azul-claro">Derecho</div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_otra_refraccion_derecho_esfera" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_otra_refraccion_derecho_cilindro" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_otra_refraccion_derecho_eje" value="" /></div>
+                        <div class="cell span-cols-2"><input type="text" formControlName="examen_refractivo_otra_refraccion_derecho_sombras" value="NO APLICA" /></div>
+
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_radio_k_2" value="7.85" /></div>
+                        <div class="cell background-azul-claro">Izquierdo</div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_dinamica_izquierdo_esfera" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_dinamica_izquierdo_cilindro" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_dinamica_izquierdo_eje" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_retinoscopia_dinamica_izquierdo_sombras" value="OMITIDA" /></div>
+                        <div class="cell background-azul-claro">Izquierdo</div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_otra_refraccion_izquierdo_esfera" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_otra_refraccion_izquierdo_cilindro" value="" /></div>
+                        <div class="cell"><input type="text" formControlName="examen_refractivo_otra_refraccion_izquierdo_eje" value="" /></div>
+                        <div class="cell span-cols-2"><input type="text" formControlName="examen_refractivo_otra_refraccion_izquierdo_sombras" value="NO APLICA" /></div>
+                      }
+
+                      <div class="cell background-azul">Subjetivo</div>
+                      <div class="cell background-azul-claro">En estado:</div>
+                      <div class="cell">Normal</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_normal" value="SI" /></div>
+                      <div class="cell background-azul-claro">Cycloplejia</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_cycloplejia" value="NO" /></div>
+                      <div class="cell background-azul-claro">Otra</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_otra" value="-" /></div>
+                      <div class="cell background-azul-claro">Distancia al</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_distancia_al" value="14" (input)="onDistanciaChange($event)" /></div>
+                      <div class="cell span-cols-2 background-azul">AV de Retinoscopia</div>
+
+                      <div class="cell background-azul-claro">Lateralidad</div>
+                      <div class="cell background-azul-claro">Esfera</div>
+                      <div class="cell background-azul-claro">Cilindro</div>
+                      <div class="cell background-azul-claro">Eje</div>
+                      <div class="cell background-azul-claro">AV LEJOS</div>
+                      <div class="cell background-azul-claro">ADD</div>
+                      <div class="cell background-azul-claro">AV CERCA</div>
+                      <div class="cell background-azul-claro">DNP</div>
+                      <div class="cell background-azul-claro">Vertice de:</div>
+                      <div class="cell background-azul-claro">mm</div>
+                      <div class="cell background-azul-claro">Estatica</div>
+                      <div class="cell background-azul-claro">Dinamica</div>
+
+                      <div class="cell background-azul-claro">Derecho</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_esfera" value="" (input)="onEsferaDerechaChange($event)" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_cilindro" value="" (input)="onCilindroDerechoChange($event)" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_eje" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_av_lejos" value="20/20" appPrefixInput="20/" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_add" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_av_cerca" value="0.50 M" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_dnp" value="31" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_vortice" value="+0.00" readonly /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_mm" value="-0.00" readonly /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_estatica" value="20/" appPrefixInput="20/" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_derecho_dinamica" value="20/" appPrefixInput="20/" /></div>
+
+                      <div class="cell background-azul-claro">Izquierdo</div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_esfera" value="" (input)="onEsferaIzquierdaChange($event)" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_cilindro" value="" (input)="onCilindroIzquierdoChange($event)" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_eje" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_av_lejos" value="20/20" appPrefixInput="20/" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_add" value="" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_av_cerca" value="0.50 M" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_dnp" value="31" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_vortice" value="+0.00" readonly /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_mm" value="-0.00" readonly /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_estatica" value="20/" appPrefixInput="20/" /></div>
+                      <div class="cell"><input type="text" formControlName="examen_refractivo_subjetivo_izquierdo_dinamica" value="20/" appPrefixInput="20/" /></div>
+
+                    </div>
+                  </div>
+                    </div>
+
+            <!-- EXAMEN OFTALMOLÓGICO -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('examenOftalmologico')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['examenOftalmologico']" [class.fa-chevron-right]="!seccionesDesplegadas['examenOftalmologico']"></i>
+                  EXAMEN OFTALMOLÓGICO
+                </h5>
+                        </div>
+                @if (seccionesDesplegadas['examenOftalmologico']) {
+                  <div class="card-body">
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Pupila Derecho</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_pupila_derecho" value="NORMOREACTIVA">
+                        </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Pupila Izquierdo</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_pupila_izquierdo" value="NORMOREACTIVA">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Párpados Derecho</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_parpados_derecho" value="SANOS">
+                        </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Párpados Izquierdo</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_parpados_izquierdo" value="SANOS">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Película Lagrimal Derecho</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_pelicula_lagrimal_derecho" value="ESTABLE">
+                        </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Película Lagrimal Izquierdo</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_pelicula_lagrimal_izquierdo" value="ESTABLE">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Conjuntiva Derecho</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_conjuntiva_derecho" value="HIPEREMIA 1° GENERALIZADA">
+                        </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Conjuntiva Izquierdo</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_conjuntiva_izquierdo" value="HIPEREMIA 1° GENERALIZADA">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Córnea Derecho</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_cornea_derecho" value="TRANSPARENTE">
+                        </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Córnea Izquierdo</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_cornea_izquierdo" value="TRANSPARENTE">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Cristalino Derecho</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_cristalino_derecho" value="TRANSPARENTE">
+                        </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Cristalino Izquierdo</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_cristalino_izquierdo" value="TRANSPARENTE">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Cámara Anterior Derecho</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_camara_anterior_derecho" value="VAN HERICK IV">
+                        </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Cámara Anterior Izquierdo</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_camara_anterior_izquierdo" value="VAN HERICK IV">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Iris Derecho</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_iris_derecho" value="CAFÉ">
+                        </div>
+                      </div>
+                      <div class="col-flex">
+                        <div class="field-flex">
+                          <label class="form-label">Iris Izquierdo</label>
+                          <input type="text" class="form-control" formControlName="examen_oftalmologico_iris_izquierdo" value="CAFÉ">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                    <label class="form-label">Bruckner</label>
+                    <input type="text" class="form-control" formControlName="examen_oftalmologico_bruckner" value="SIMÉTRICO">
+                      </div>
+                    </div>
+                  </div>
+                    </div>
+                }
+            </div>
+
+            <!-- OFTALMOSCOPIA -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('oftalmoscopia')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['oftalmoscopia']" [class.fa-chevron-right]="!seccionesDesplegadas['oftalmoscopia']"></i>
+                  OFTALMOSCOPIA
+                </h5>
+              </div>
+                @if (seccionesDesplegadas['oftalmoscopia']) {
+                  <div class="card-body">
+                    <div class="grid-table table-examen-oftalmoscopia">
+
+                      <div class="cell span-cols-2 background-azul">Fondo de ojo derecho</div>
+                      <div class="cell span-cols-2 background-azul">Fondo de ojo izquierdo</div>
+
+                      <div class="cell background-azul-claro">Fondo de ojo derecho</div>
+                      <div class="cell"><input type="number" class="form-control" formControlName="oftalmoscopia_derecho_excavacion" value="0.3"></div>
+                      <div class="cell background-azul-claro">Fondo de ojo izquierdo</div>
+                      <div class="cell"><input type="number" class="form-control" formControlName="oftalmoscopia_izquierdo_excavacion" value="0.3"></div>
+
+                      <div class="cell span-cols-2"><textarea class="form-control" formControlName="oftalmoscopia_derecho_descripcion" rows="2"></textarea></div>
+                      <div class="cell span-cols-2"><textarea class="form-control" formControlName="oftalmoscopia_izquierdo_descripcion" rows="2"></textarea></div>
+                    </div>
+                  </div>
+                }
+            </div>
+
+            <!-- FÓRMULA -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('formula')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['formula']" [class.fa-chevron-right]="!seccionesDesplegadas['formula']"></i>
+                  FÓRMULA
+                </h5>
+              </div>
+                @if (seccionesDesplegadas['formula']) {
+                  <div class="card-body">
+                    <div class="table-responsive-container">
+                      <div class="grid-table table-examen-formula">
+
+                      <div class="cell background-azul-claro">Ojo</div>
+                      <div class="cell background-azul-claro">Esfera</div>
+                      <div class="cell background-azul-claro">Cilindro</div>
+                      <div class="cell background-azul-claro">Eje</div>
+                      <div class="cell background-azul-claro">AV Lejos</div>
+                      <div class="cell background-azul-claro">ADD</div>
+                      <div class="cell background-azul-claro">AC Cerca</div>
+                      <div class="cell background-azul-claro">DNP</div>
+                      <div class="cell background-azul-claro">Recomendación</div>
+
+                      <div class="cell background-azul-claro">Derecho</div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_derecho_esfera" value="N"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_derecho_cilindro" value="-"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_derecho_eje" value="-°"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_derecho_av_lejos" value="20/20" appPrefixInput="20/"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_derecho_add" value="+"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_derecho_av_cerca" value="0.50 M"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_derecho_dnp" value="31"></div>
+                      <div class="cell span-rows-2"><textarea class="form-control" formControlName="formula_derecho_recomendacion" rows="2"></textarea></div>
+
+                      <div class="cell background-azul-claro">Izquierdo</div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_izquierdo_esfera" value="N"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_izquierdo_cilindro" value="-"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_izquierdo_eje" value="-°"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_izquierdo_av_lejos" value="20/20" appPrefixInput="20/"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_izquierdo_add" value="+"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_izquierdo_av_cerca" value="0.50 M"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="formula_izquierdo_dnp" value="31"></div>
+
+                      </div>                    
+                    </div>
+                  </div>
+                }
+            </div>
+
+            <!-- OBSERVACIONES -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('observaciones')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['observaciones']" [class.fa-chevron-right]="!seccionesDesplegadas['observaciones']"></i>
+                  OBSERVACIONES
+                </h5>
+              </div>
+                @if (seccionesDesplegadas['observaciones']) {
+                  <div class="card-body">
+                    <div class="row-flex">
+                      <div class="col-flex">
+                        <div class="field-flex">
+                    <label class="form-label">Observaciones Generales</label>
+                    <textarea class="form-control" formControlName="observaciones" rows="6"></textarea>
+                  </div>
+                </div>
+              </div>
+                  </div>
+                }
+            </div>
+
+            <!-- DIAGNÓSTICO -->
+            <div class="card mb-4">
+              <div class="card-header section-header" (click)="toggleSeccion('diagnostico')">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['diagnostico']" [class.fa-chevron-right]="!seccionesDesplegadas['diagnostico']"></i>
+                  DIAGNÓSTICO
+                </h5>
+              </div>
+                @if (seccionesDesplegadas['diagnostico']) {
+                  <div class="card-body">
+                    <div class="table-responsive-container">
+                      <div class="grid-table table-examen-diagnostico">
+
+                      <div class="cell background-azul-claro">Código</div>
+                      <div class="cell background-azul-claro">Diagnóstico</div>
+                      <div class="cell background-azul-claro">Descripción</div>
+                      <div class="cell background-azul-claro">Ojo</div>
+                      <div class="cell background-azul-claro">Principal</div>
+
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_codigo_1"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_diagnostico_1"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_descripcion_1"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_ojo_1"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_principal_1"></div>
+
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_codigo_2"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_diagnostico_2"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_descripcion_2"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_ojo_2"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_principal_2"></div>
+
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_codigo_3"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_diagnostico_3"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_descripcion_3"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_ojo_3"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_principal_3"></div>
+
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_codigo_4"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_diagnostico_4"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_descripcion_4"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_ojo_4"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_principal_4"></div>
+
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_codigo_5"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_diagnostico_5"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_descripcion_5"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_ojo_5"></div>
+                      <div class="cell"><input type="text" class="form-control" formControlName="diagnostico_principal_5"></div>
+                    </div>
+
+                  </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Botones -->
+            <div class="row">
+              <div class="col-12">
+                <button type="button" class="btn btn-secondary me-2" (click)="closeForm()">
+                  <i class="fas fa-times"></i> {{ editingHistoriaId ? 'Cerrar' : 'Cancelar' }}
+                </button>
+                  @if (!editingHistoriaId) {
+                    <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Guardar Historia Clínica
+                </button>
+                  }
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }

@@ -1,0 +1,54 @@
+/* Estilos específicos para el componente de ópticas */
+
+.opticas-container {
+  padding: 20px 0;
+}
+
+.opticas-header {
+  margin-bottom: 30px;
+}
+
+.opticas-table {
+  margin-top: 20px;
+}
+
+.opticas-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.opticas-status-badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+}
+
+.opticas-modal {
+  z-index: 1050;
+}
+
+.opticas-form-section {
+  margin-bottom: 15px;
+}
+
+.opticas-form-label {
+  font-weight: 500;
+  color: var(--dark-color);
+}
+
+.opticas-required-field::after {
+  content: " *";
+  color: var(--error-color);
+}
+
+/* Responsive adjustments for opticas */
+@media (max-width: 768px) {
+  .opticas-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .opticas-table {
+    font-size: 0.875rem;
+  }
+}

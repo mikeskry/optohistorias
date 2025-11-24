@@ -1,0 +1,40 @@
+ # Compiled output
+/dist
+/tmp
+/out-tsc
+
+# Runtime / test caches
+/.angular/cache
+/.angular/*
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# IDEs
+/.idea
+/.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+src/environments/environment.prod.ts
+src/environments/environment.ts
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Angular build artifacts
+.angular/

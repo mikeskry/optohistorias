@@ -1,0 +1,100 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">
+            <i class="fas fa-signature me-2"></i>
+            Gestión de Firma
+          </h4>
+        </div>
+        <div class="card-body">
+          
+          <!-- Firma actual -->
+          <div class="mb-4" *ngIf="currentUser?.firma">
+            <h5>Firma Actual</h5>
+            <div class="firma-preview">
+              <img [src]="getFirmaUrl()" 
+                   alt="Firma actual" 
+                   class="img-fluid border rounded">
+            </div>
+            <div class="mt-2">
+              <button class="btn btn-danger btn-sm" 
+                      (click)="deleteFirma()" 
+                      [disabled]="isDeleting">
+                <i class="fas fa-trash me-1" *ngIf="!isDeleting"></i>
+                <i class="fas fa-spinner fa-spin me-1" *ngIf="isDeleting"></i>
+                {{ isDeleting ? 'Eliminando...' : 'Eliminar Firma' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- No hay firma -->
+          <div class="mb-4" *ngIf="!currentUser?.firma">
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              No hay firma configurada. Suba una imagen de su firma para usarla en los documentos.
+            </div>
+          </div>
+
+          <!-- Subir nueva firma -->
+          <div class="mb-4">
+            <h5>{{ currentUser?.firma ? 'Actualizar Firma' : 'Subir Firma' }}</h5>
+            
+            <div class="mb-3">
+              <label for="firmaFile" class="form-label">Seleccionar Archivo de Firma</label>
+              <input type="file" 
+                     id="firmaFile"
+                     class="form-control" 
+                     accept="image/*"
+                     (change)="onFileSelected($event)">
+              <div class="form-text">
+                Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 2MB
+              </div>
+            </div>
+
+            <!-- Preview del archivo seleccionado -->
+            <div class="mb-3" *ngIf="filePreview">
+              <label class="form-label">Vista Previa</label>
+              <div class="firma-preview">
+                <img [src]="filePreview" 
+                     alt="Vista previa" 
+                     class="img-fluid border rounded">
+              </div>
+              <div class="mt-2">
+                <button class="btn btn-outline-secondary btn-sm" 
+                        (click)="removeSelectedFile()">
+                  <i class="fas fa-times me-1"></i>
+                  Quitar Archivo
+                </button>
+              </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary" 
+                      (click)="uploadFirma()" 
+                      [disabled]="!selectedFile || isUploading">
+                <i class="fas fa-upload me-1" *ngIf="!isUploading"></i>
+                <i class="fas fa-spinner fa-spin me-1" *ngIf="isUploading"></i>
+                {{ isUploading ? 'Subiendo...' : (currentUser?.firma ? 'Actualizar Firma' : 'Subir Firma') }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Información adicional -->
+          <div class="alert alert-light">
+            <h6><i class="fas fa-lightbulb me-2"></i>Información Importante</h6>
+            <ul class="mb-0">
+              <li>La firma debe ser una imagen clara y legible</li>
+              <li>Se recomienda usar fondo transparente o blanco</li>
+              <li>La firma se utilizará al generar pdf de la historia clínica</li>
+              <li>Puede actualizar su firma en cualquier momento</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

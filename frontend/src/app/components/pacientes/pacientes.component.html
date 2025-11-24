@@ -1,0 +1,261 @@
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Gestión de Pacientes</h2>
+        <button class="btn btn-primary" (click)="showCreateForm()">
+          <i class="fas fa-plus"></i> Nuevo Paciente
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Form -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <form [formGroup]="searchForm" (ngSubmit)="searchPacientes()">
+            <div class="row">
+              <div class="col-md-8">
+                <label class="form-label">Buscar paciente</label>
+                <input type="text" class="form-control" formControlName="query" 
+                       placeholder="Buscar por documento, nombre, apellidos o teléfono...">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">&nbsp;</label>
+                <div>
+                  <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-search"></i> Buscar
+                  </button>
+                  <button type="button" class="btn btn-secondary" (click)="clearSearch()">
+                    <i class="fas fa-times"></i> Limpiar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Patients List -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          @if (pacientes.length > 0) {
+            <div class="historias-container pacientes-container">
+              <!-- Header -->
+              <div class="historias-header">
+                <div class="historia-cell">Documento</div>
+                <div class="historia-cell">Nombre Completo</div>
+                <div class="historia-cell">Contacto</div>
+                <div class="historia-cell">Acciones</div>
+              </div>
+              
+              <!-- Rows -->
+              @for (paciente of pacientes; track paciente.id) {
+                <div class="historia-row" (click)="verHistoriasClinicas(paciente)">
+                  <div class="historia-cell fecha-cell">
+                    <i class="fas fa-id-card me-2"></i>
+                    {{ paciente.documento }}
+                  </div>
+                  <div class="historia-cell motivo-cell">
+                    <i class="fas fa-user me-2"></i>
+                    {{ paciente.nombre }} {{ paciente.apellidos }}
+                  </div>
+                  <div class="historia-cell motivo-cell">
+                    @if (paciente.telefono) {
+                      <i class="fas fa-phone me-2"></i>
+                      {{ paciente.telefono }}
+                    } @else {
+                      <span class="text-muted">Sin teléfono</span>
+                    }
+                  </div>
+                  <div class="historia-cell acciones-cell">
+                    <button class="btn btn-sm btn-outline-primary me-1" (click)="editPaciente(paciente); $event.stopPropagation()">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-info" (click)="verHistoriasClinicas(paciente); $event.stopPropagation()">
+                      <i class="fas fa-file-medical"></i>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          @if (pacientes.length === 0) {
+            <div class="empty-state">
+              <i class="fas fa-users fa-4x mb-4"></i>
+              <h4>No hay pacientes</h4>
+              <p>No se encontraron pacientes con los criterios de búsqueda.</p>
+              <button class="btn btn-primary btn-lg" (click)="showCreateForm()">
+                <i class="fas fa-plus"></i> Crear Primer Paciente
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Modal -->
+<div class="modal fade" id="pacienteModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ isEditing ? 'Editar' : 'Nuevo' }} Paciente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="pacienteForm" (ngSubmit)="savePaciente()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">Documento *</label>
+              <input type="text" class="form-control" formControlName="documento" 
+                     [class.is-invalid]="pacienteForm.get('documento')?.invalid && pacienteForm.get('documento')?.touched">
+              <div class="invalid-feedback" *ngIf="pacienteForm.get('documento')?.invalid && pacienteForm.get('documento')?.touched">
+                Documento es requerido
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Tipo de Documento *</label>
+              <input type="text" class="form-control" formControlName="tipo_documento">
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label class="form-label">Nombre *</label>
+              <input type="text" class="form-control" formControlName="nombre"
+                     [class.is-invalid]="pacienteForm.get('nombre')?.invalid && pacienteForm.get('nombre')?.touched">
+              <div class="invalid-feedback" *ngIf="pacienteForm.get('nombre')?.invalid && pacienteForm.get('nombre')?.touched">
+                Nombre es requerido
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Apellidos *</label>
+              <input type="text" class="form-control" formControlName="apellidos"
+                     [class.is-invalid]="pacienteForm.get('apellidos')?.invalid && pacienteForm.get('apellidos')?.touched">
+              <div class="invalid-feedback" *ngIf="pacienteForm.get('apellidos')?.invalid && pacienteForm.get('apellidos')?.touched">
+                Apellidos son requeridos
+              </div>
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label class="form-label">Email *</label>
+              <input type="email" class="form-control" formControlName="email"
+                     [class.is-invalid]="pacienteForm.get('email')?.invalid && pacienteForm.get('email')?.touched">
+              <div class="invalid-feedback" *ngIf="pacienteForm.get('email')?.invalid && pacienteForm.get('email')?.touched">
+                Email válido es requerido
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Teléfono</label>
+              <input type="tel" class="form-control" formControlName="telefono">
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-md-4">
+              <label class="form-label">Fecha de Nacimiento *</label>
+              <input type="date" class="form-control" formControlName="fecha_nacimiento"
+                     [class.is-invalid]="pacienteForm.get('fecha_nacimiento')?.invalid && pacienteForm.get('fecha_nacimiento')?.touched">
+              <div class="invalid-feedback" *ngIf="pacienteForm.get('fecha_nacimiento')?.invalid && pacienteForm.get('fecha_nacimiento')?.touched">
+                Fecha de nacimiento es requerida
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Edad</label>
+              <input type="text" class="form-control" [value]="calculatedAge ? calculatedAge + ' años' : ''" readonly>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Género *</label>
+              <select class="form-select" formControlName="genero" 
+                      [class.is-invalid]="pacienteForm.get('genero')?.invalid && pacienteForm.get('genero')?.touched">
+                <option value="" selected>Seleccionar</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+                <option value="O">Otro</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="pacienteForm.get('genero')?.invalid && pacienteForm.get('genero')?.touched">
+                Debe seleccionar un género
+              </div>
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label class="form-label">RH *</label>
+              <select class="form-select" formControlName="rh" 
+                      [class.is-invalid]="pacienteForm.get('rh')?.invalid && pacienteForm.get('rh')?.touched">
+                <option value="" selected>Seleccionar</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="pacienteForm.get('rh')?.invalid && pacienteForm.get('rh')?.touched">
+                Debe seleccionar un tipo de sangre
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nombre del Acudiente</label>
+              <input type="text" class="form-control" formControlName="nombre_acudiente" placeholder="Nombre completo del acudiente">
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-12">
+              <label class="form-label">Teléfono del Acudiente</label>
+              <input type="tel" class="form-control" formControlName="telefono_acudiente" placeholder="Teléfono del acudiente">
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-12">
+              <label class="form-label">Dirección</label>
+              <input type="text" class="form-control" formControlName="direccion" placeholder="Dirección de residencia">
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label class="form-label">EPS</label>
+              <input type="text" class="form-control" formControlName="eps" placeholder="Entidad Promotora de Salud">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Tipo de Afiliación *</label>
+              <select class="form-select" formControlName="tipo_afiliacion" 
+                      [class.is-invalid]="pacienteForm.get('tipo_afiliacion')?.invalid && pacienteForm.get('tipo_afiliacion')?.touched">
+                <option value="" selected>Seleccionar</option>
+                <option value="Contributivo">Contributivo</option>
+                <option value="Subsidiado">Subsidiado</option>
+                <option value="Excepción">Excepción</option>
+                <option value="no afiliado">no afiliado</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="pacienteForm.get('tipo_afiliacion')?.invalid && pacienteForm.get('tipo_afiliacion')?.touched">
+                Debe seleccionar un tipo de afiliación
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="savePaciente()" [disabled]="pacienteForm.invalid">
+          {{ isEditing ? 'Actualizar' : 'Crear' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+/* Estilos específicos para el componente de pacientes */
+
+.pacientes-container {
+  padding: 20px 0;
+}
+
+.pacientes-header {
+  margin-bottom: 30px;
+}
+
+.pacientes-search-form {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.pacientes-table {
+  margin-top: 20px;
+}
+
+.pacientes-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pacientes-form-section {
+  margin-bottom: 15px;
+}
+
+.pacientes-form-label {
+  font-weight: 500;
+  color: var(--dark-color);
+}
+
+.pacientes-required-field::after {
+  content: " *";
+  color: var(--error-color);
+}
+
+.pacientes-modal-lg {
+  max-width: 800px;
+}
+
+.pacientes-search-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+/* Responsive adjustments for pacientes */
+@media (max-width: 768px) {
+  .pacientes-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .pacientes-search-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .pacientes-table {
+    font-size: 0.875rem;
+  }
+  
+  .pacientes-modal-lg {
+    max-width: 95%;
+    margin: 10px;
+  }
+}

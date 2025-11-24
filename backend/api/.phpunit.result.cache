@@ -1,0 +1,1 @@
+{"version":1,"defects":[],"times":{"HistoriasClinicasServiceTest::testUpdateHistoriaClinicaWithin24HoursSucceeds":0.008,"HistoriasClinicasServiceTest::testUpdateHistoriaClinicaAfter24HoursThrowsException":0.003}}

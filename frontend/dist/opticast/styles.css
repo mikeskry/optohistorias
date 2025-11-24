@@ -1,0 +1,554 @@
+/*!**********************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[5].rules[0].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[5].rules[0].oneOf[0].use[2]!./src/styles.css?ngGlobalStyle ***!
+  \**********************************************************************************************************************************************************************************************************************/
+/* Variables CSS globales */
+:root {
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --error-color: #dc3545;
+  --info-color: #17a2b8;
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --gradient-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --green-color: #198754;
+  --blue-color: #1e3a8a;
+  --hover-color: #1e3a8a;
+  --clear-grey-color: #f3f3f3;
+  --blue-clear-color: #E5F2FF;
+}
+
+
+/* Estilos globales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--light-color);
+  color: var(--dark-color);
+  padding-top: 30px; /* Espacio para el header fijo */
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 10px; /* Menor padding en móviles */
+  }
+}
+
+input, select, textarea {
+  text-transform: uppercase;
+}
+
+#username, #password{
+  text-transform: none;
+}
+
+.btn-blue-clear {
+  background-color: var(--info-color);
+  color: white;
+}
+
+.btn-yellow {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+.btn:hover {
+  background-color: var(--hover-color);
+  color: white;
+}
+
+.row.contenedor-listado-historias
+{
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* Estilos para toasts */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.toast {
+  margin-bottom: 10px;
+  min-width: 300px;
+}
+
+.toast-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.toast-warning {
+  background-color: var(--warning-color);
+  color: var(--dark-color);
+}
+
+.toast-error {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.toast-info {
+  background-color: var(--info-color);
+  color: white;
+}
+
+/* Estilos para formularios */
+.form-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-section-title {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+/* Estilos para tablas */
+.table-responsive {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table th {
+  background-color: var(--light-color);
+  border-top: none;
+  font-weight: 600;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td {
+  background-color: rgba(0,0,0,.02);
+}
+
+/* Estilos para botones */
+.btn-group-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Estilos para accordion */
+.accordion-button:not(.collapsed) {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para navegación */
+.navbar-brand {
+  font-weight: bold;
+  color: var(--primary-color) !important;
+}
+
+.nav-link.active {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  border-radius: 5px;
+}
+
+/* Estilos para cards */
+.card {
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+/* Estilos para modales */
+.modal-header {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+.modal.show {
+  display: block !important;
+}
+
+.modal-backdrop {
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-lg {
+  max-width: 800px;
+}
+
+/* Estilos para paginación */
+.pagination .page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Estilos para badges */
+.badge {
+  font-size: 0.8em;
+}
+
+/* Estilos para tooltips */
+.tooltip {
+  font-size: 0.875rem;
+}
+
+/* Estilos para iconos */
+.fa-3x {
+  font-size: 3em;
+}
+
+/* Estilos para responsive */
+@media (max-width: 768px) {
+  .btn-group-actions {
+    flex-direction: column;
+  }
+  
+  .toast-container {
+    left: 20px;
+    right: 20px;
+  }
+  
+  .toast {
+    min-width: auto;
+  }
+  
+  .modal-lg {
+    max-width: 95%;
+    margin: 10px;
+  }
+}
+
+/* ===== ESTILOS GLOBALES PARA TABLAS CON DIVS ===== */
+
+/* Estilos para el contenedor de tablas con divs */
+.historias-container {
+  border: 1px solid var(--secondary-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.historias-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 180px;
+  background-color: var(--blue-color);
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.historia-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 180px;
+  border-bottom: 1px solid #f1f3f4;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background-color: white;
+}
+
+/* Estilos específicos para tabla de pacientes (4 columnas) */
+.pacientes-container .historias-header {
+  grid-template-columns: 1.5fr 2fr 1fr 140px;
+}
+
+.pacientes-container .historia-row {
+  grid-template-columns: 1.5fr 2fr 1fr 140px;
+}
+
+.historia-row:last-child {
+  border-bottom: none;
+}
+
+.historia-row:hover {
+  background-color: var(--light-color);
+  border-left: 4px solid var(--primary-color);
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.historia-cell {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #f1f3f4;
+  min-height: 60px;
+}
+
+.historia-cell:last-child {
+  border-right: none;
+  justify-content: center;
+}
+
+/* Estilos específicos para cada columna */
+.fecha-cell {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 1rem;
+}
+
+.motivo-cell {
+  color: var(--secondary-color);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.acciones-cell {
+  justify-content: center;
+}
+
+/* Mejorar el botón de acciones */
+.historia-row .btn {
+  transition: all 0.2s ease;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.historia-row .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilos para la tabla vacía */
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-state i {
+  color: var(--secondary-color);
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.empty-state h4 {
+  color: var(--secondary-color);
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: var(--secondary-color);
+  margin-bottom: 30px;
+  opacity: 0.7;
+}
+
+/* Responsive para tablas con divs */
+@media (max-width: 768px) {
+  .historias-header {
+    grid-template-columns: 1fr;
+    font-size: 0.8rem;
+    padding: 12px 16px;
+  }
+  
+  .historia-row {
+    grid-template-columns: 1fr;
+    border-bottom: 2px solid #f1f3f4;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .historia-cell {
+    padding: 12px 16px;
+    border-right: none;
+    border-bottom: 1px solid #f1f3f4;
+    min-height: auto;
+  }
+  
+  .historia-cell:last-child {
+    border-bottom: none;
+    justify-content: flex-start;
+  }
+  
+  .fecha-cell {
+    font-size: 0.9rem;
+    background-color: var(--light-color);
+    font-weight: 700;
+  }
+  
+  .motivo-cell {
+    font-size: 0.85rem;
+    padding: 8px 16px;
+  }
+  
+  .acciones-cell {
+    justify-content: flex-start;
+    padding: 8px 16px;
+  }
+  
+  .historia-row .btn {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
+
+/* Responsive específico para tabla de pacientes */
+@media (max-width: 1200px) {
+  .pacientes-container .historias-header {
+    grid-template-columns: 1.2fr 2fr 0.8fr 120px;
+  }
+  
+  .pacientes-container .historia-row {
+    grid-template-columns: 1.2fr 2fr 0.8fr 120px;
+  }
+}
+
+@media (max-width: 992px) {
+  .pacientes-container .historias-header {
+    grid-template-columns: 1fr 1.5fr 0.8fr 110px;
+  }
+  
+  .pacientes-container .historia-row {
+    grid-template-columns: 1fr 1.5fr 0.8fr 110px;
+  }
+  
+  .pacientes-container .historia-cell {
+    padding: 12px 8px;
+    font-size: 0.85rem;
+  }
+  
+  .pacientes-container .historia-row .btn {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .pacientes-container .historias-header {
+    grid-template-columns: 1fr;
+    font-size: 0.8rem;
+    padding: 12px 16px;
+  }
+  
+  .pacientes-container .historia-row {
+    grid-template-columns: 1fr;
+    border-bottom: 2px solid #f1f3f4;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pacientes-container .historia-cell {
+    padding: 12px 16px;
+    border-right: none;
+    border-bottom: 1px solid #f1f3f4;
+    min-height: auto;
+  }
+  
+  .pacientes-container .historia-cell:last-child {
+    border-bottom: none;
+    justify-content: flex-start;
+  }
+  
+  .pacientes-container .fecha-cell {
+    font-size: 0.9rem;
+    background-color: var(--light-color);
+    font-weight: 700;
+  }
+  
+  .pacientes-container .motivo-cell {
+    font-size: 0.85rem;
+    padding: 8px 16px;
+  }
+  
+  .pacientes-container .acciones-cell {
+    justify-content: flex-start;
+    padding: 8px 16px;
+  }
+  
+  .pacientes-container .historia-row .btn {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .historias-container {
+    margin: 0 -15px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .historia-cell {
+    padding: 10px 12px;
+  }
+  
+  .fecha-cell {
+    font-size: 0.85rem;
+  }
+  
+  .motivo-cell {
+    font-size: 0.8rem;
+  }
+  
+  /* Responsive específico para pacientes en pantallas muy pequeñas */
+  .pacientes-container {
+    margin: 0 -15px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .pacientes-container .historia-cell {
+    padding: 10px 12px;
+  }
+  
+  .pacientes-container .fecha-cell {
+    font-size: 0.85rem;
+  }
+  
+  .pacientes-container .motivo-cell {
+    font-size: 0.8rem;
+  }
+  
+  .pacientes-container .historia-row .btn {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+}
+
+
+
+/*# sourceMappingURL=styles.css.map*/

@@ -1,0 +1,464 @@
+<div class="container-fluid">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2>Historias Clínicas</h2>
+          <p class="text-muted mb-0" *ngIf="pacienteNombre">Paciente: {{ pacienteNombre }}</p>
+        </div>
+        <div>
+          <button class="btn btn-secondary me-2" (click)="volverAPacientes()">
+            <i class="fas fa-arrow-left"></i> Volver a Pacientes
+          </button>
+          <button class="btn btn-primary" (click)="showCreateFormModal()">
+            <i class="fas fa-plus"></i> Nueva Historia Clínica
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de Historias Clínicas -->
+  <div class="row" *ngIf="!showCreateForm">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive" *ngIf="historias.length > 0">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Fecha Consulta</th>
+                  <th>Motivo Consulta</th>
+                  <th>Profesional</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let historia of historias">
+                  <td>{{ historia.fecha_consulta | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ historia.motivo_consulta }}</td>
+                  <td>{{ historia.nombre_profesional || 'N/A' }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" (click)="editHistoria(historia)">
+                      <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="btn btn-sm btn-outline-info" (click)="editHistoria(historia)">
+                      <i class="fas fa-eye"></i> Ver
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="historias.length === 0" class="text-center text-muted py-4">
+            <i class="fas fa-file-medical fa-3x mb-3"></i>
+            <p>No hay historias clínicas registradas para este paciente.</p>
+            <button class="btn btn-primary" (click)="showCreateFormModal()">
+              <i class="fas fa-plus"></i> Crear Primera Historia Clínica
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de Historia Clínica -->
+  <div class="row" *ngIf="showCreateForm">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4>{{ isEditing ? 'Editar' : 'Nueva' }} Historia Clínica</h4>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="historiaForm" (ngSubmit)="saveHistoria()">
+            
+            <!-- CUESTIONARIO -->
+            <div class="card mb-4">
+              <div class="card-header" (click)="toggleSeccion('cuestionario')" style="cursor: pointer;">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['cuestionario']" [class.fa-chevron-right]="!seccionesDesplegadas['cuestionario']"></i>
+                  CUESTIONARIO
+                </h5>
+              </div>
+              <div class="card-body" *ngIf="seccionesDesplegadas['cuestionario']">
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Motivo de Consulta</label>
+                    <input type="text" class="form-control" formControlName="motivo_consulta" placeholder="Describa el motivo de la consulta">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Tipo de Examen</label>
+                    <input type="text" class="form-control" formControlName="tipo_examen" readonly>
+                  </div>
+                </div>
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Anamnesis</label>
+                    <textarea class="form-control" formControlName="anamnesis" rows="3"></textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Última Valoración de Optometría</label>
+                    <textarea class="form-control" formControlName="ultima_valoracion_optometria" rows="3"></textarea>
+                  </div>
+                </div>
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Ocupación/Profesión/Actividades</label>
+                    <input type="text" class="form-control" formControlName="ocupacion_profesion">
+                  </div>
+                </div>
+                
+                <!-- Antecedentes Familiares -->
+                <h6>Antecedentes Familiares</h6>
+                <div formGroupName="antecedentes_familiares">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="diabetes">
+                        <label class="form-check-label">Diabetes</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="hipertension">
+                        <label class="form-check-label">Hipertensión</label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="glaucoma">
+                        <label class="form-check-label">Glaucoma</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="catarata">
+                        <label class="form-check-label">Catarata</label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="degeneracion_macular">
+                        <label class="form-check-label">Degeneración Macular</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="retinopatia">
+                        <label class="form-check-label">Retinopatía</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-12">
+                      <label class="form-label">Otros Antecedentes Familiares</label>
+                      <input type="text" class="form-control" formControlName="otros_antecedentes" readonly>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Antecedentes Personales -->
+                <h6 class="mt-4">Antecedentes Personales</h6>
+                <div formGroupName="antecedentes_personales">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="diabetes">
+                        <label class="form-check-label">Diabetes</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="hipertension">
+                        <label class="form-check-label">Hipertensión</label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="glaucoma">
+                        <label class="form-check-label">Glaucoma</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="catarata">
+                        <label class="form-check-label">Catarata</label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="degeneracion_macular">
+                        <label class="form-check-label">Degeneración Macular</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="retinopatia">
+                        <label class="form-check-label">Retinopatía</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-12">
+                      <label class="form-label">Otros Antecedentes Personales</label>
+                      <input type="text" class="form-control" formControlName="otros_antecedentes" readonly>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Antecedentes Laborales -->
+                <h6 class="mt-4">Antecedentes Laborales</h6>
+                <div formGroupName="antecedentes_laborales">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="exposicion_quimicos">
+                        <label class="form-check-label">Exposición a Químicos</label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="trabajo_pantalla">
+                        <label class="form-check-label">Trabajo con Pantalla</label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="iluminacion_inadecuada">
+                        <label class="form-check-label">Iluminación Inadecuada</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-12">
+                      <label class="form-label">Otros Antecedentes Laborales</label>
+                      <input type="text" class="form-control" formControlName="otros_antecedentes" readonly>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LENSOMETRÍA -->
+            <div class="card mb-4">
+              <div class="card-header" (click)="toggleSeccion('lensometria')" style="cursor: pointer;">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['lensometria']" [class.fa-chevron-right]="!seccionesDesplegadas['lensometria']"></i>
+                  LENSOMETRÍA
+                </h5>
+              </div>
+              <div class="card-body" *ngIf="seccionesDesplegadas['lensometria']">
+                <h6>Fórmula</h6>
+                <div formGroupName="lensometria_formula_lejos">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-primary">
+                        <tr>
+                          <th>Lateralidad</th>
+                          <th>Esfera</th>
+                          <th>Cilindro</th>
+                          <th>Eje</th>
+                          <th>Adición</th>
+                          <th>Prisma</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><strong>Derecho</strong></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="derecho.esfera"></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="derecho.cilindro"></td>
+                          <td><input type="number" class="form-control form-control-sm" formControlName="derecho.eje"></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="derecho.adicion"></td>
+                          <td><input type="text" class="form-control form-control-sm" formControlName="derecho.prisma" readonly></td>
+                        </tr>
+                        <tr>
+                          <td><strong>Izquierdo</strong></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="izquierdo.esfera"></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="izquierdo.cilindro"></td>
+                          <td><input type="number" class="form-control form-control-sm" formControlName="izquierdo.eje"></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="izquierdo.adicion"></td>
+                          <td><input type="text" class="form-control form-control-sm" formControlName="izquierdo.prisma" readonly></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                
+                <h6 class="mt-4">Fórmula de Cerca o Adicional</h6>
+                <div formGroupName="lensometria_formula_cerca">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-primary">
+                        <tr>
+                          <th>Lateralidad</th>
+                          <th>Esfera</th>
+                          <th>Cilindro</th>
+                          <th>Eje</th>
+                          <th>Adición</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><strong>Derecho</strong></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="derecho.esfera"></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="derecho.cilindro"></td>
+                          <td><input type="number" class="form-control form-control-sm" formControlName="derecho.eje"></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="derecho.adicion"></td>
+                        </tr>
+                        <tr>
+                          <td><strong>Izquierdo</strong></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="izquierdo.esfera"></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="izquierdo.cilindro"></td>
+                          <td><input type="number" class="form-control form-control-sm" formControlName="izquierdo.eje"></td>
+                          <td><input type="number" step="0.25" class="form-control form-control-sm" formControlName="izquierdo.adicion"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                
+                <div class="row mt-3">
+                  <div class="col-12">
+                    <label class="form-label">Observaciones</label>
+                    <textarea class="form-control" formControlName="lensometria_observaciones" rows="3"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AGUDEZA VISUAL -->
+            <div class="card mb-4">
+              <div class="card-header" (click)="toggleSeccion('agudezaVisual')" style="cursor: pointer;">
+                <h5 class="mb-0">
+                  <i class="fas" [class.fa-chevron-down]="seccionesDesplegadas['agudezaVisual']" [class.fa-chevron-right]="!seccionesDesplegadas['agudezaVisual']"></i>
+                  AGUDEZA VISUAL
+                </h5>
+              </div>
+              <div class="card-body" *ngIf="seccionesDesplegadas['agudezaVisual']">
+                <div formGroupName="agudeza_visual_lejos">
+                  <h6>Agudeza Visual Lejos</h6>
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-primary">
+                        <tr>
+                          <th rowspan="2">Test Usado</th>
+                          <th colspan="3">Agudeza Visual Lejos</th>
+                        </tr>
+                        <tr>
+                          <th>Derecho</th>
+                          <th>Izquierdo</th>
+                          <th>Ambos</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <div formGroupName="test_usado">
+                              <input type="text" class="form-control form-control-sm" formControlName="distancia" readonly>
+                              <input type="text" class="form-control form-control-sm mt-1" formControlName="descripcion" readonly>
+                            </div>
+                          </td>
+                          <td>
+                            <div formGroupName="lateralidad">
+                              <div formGroupName="sin_correccion">
+                                <input type="text" class="form-control form-control-sm" formControlName="derecho" readonly>
+                              </div>
+                              <div formGroupName="con_correccion">
+                                <input type="text" class="form-control form-control-sm mt-1" formControlName="derecho" readonly>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div formGroupName="lateralidad">
+                              <div formGroupName="sin_correccion">
+                                <input type="text" class="form-control form-control-sm" formControlName="izquierdo" readonly>
+                              </div>
+                              <div formGroupName="con_correccion">
+                                <input type="text" class="form-control form-control-sm mt-1" formControlName="izquierdo" readonly>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div formGroupName="lateralidad">
+                              <div formGroupName="sin_correccion">
+                                <input type="text" class="form-control form-control-sm" formControlName="ambos" readonly>
+                              </div>
+                              <div formGroupName="con_correccion">
+                                <input type="text" class="form-control form-control-sm mt-1" formControlName="ambos" readonly>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                
+                <div formGroupName="agudeza_visual_cerca">
+                  <h6 class="mt-4">Agudeza Visual Cerca</h6>
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-primary">
+                        <tr>
+                          <th rowspan="2">Test Usado</th>
+                          <th colspan="3">Agudeza Visual Cerca</th>
+                        </tr>
+                        <tr>
+                          <th>Derecho</th>
+                          <th>Izquierdo</th>
+                          <th>Observación</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <div formGroupName="test_usado">
+                              <input type="text" class="form-control form-control-sm" formControlName="distancia" readonly>
+                              <input type="text" class="form-control form-control-sm mt-1" formControlName="descripcion" readonly>
+                            </div>
+                          </td>
+                          <td>
+                            <div formGroupName="lateralidad">
+                              <div formGroupName="sin_correccion">
+                                <input type="text" class="form-control form-control-sm" formControlName="derecho" readonly>
+                              </div>
+                              <div formGroupName="con_correccion">
+                                <input type="text" class="form-control form-control-sm mt-1" formControlName="derecho" readonly>
+                              </div>
+                              <div formGroupName="pin_hole">
+                                <input type="text" class="form-control form-control-sm mt-1" formControlName="derecho" readonly>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div formGroupName="lateralidad">
+                              <div formGroupName="sin_correccion">
+                                <input type="text" class="form-control form-control-sm" formControlName="izquierdo" readonly>
+                              </div>
+                              <div formGroupName="con_correccion">
+                                <input type="text" class="form-control form-control-sm mt-1" formControlName="izquierdo" readonly>
+                              </div>
+                              <div formGroupName="pin_hole">
+                                <input type="text" class="form-control form-control-sm mt-1" formControlName="izquierdo" readonly>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <input type="text" class="form-control form-control-sm" readonly>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="row">
+              <div class="col-12">
+                <button type="button" class="btn btn-secondary me-2" (click)="closeForm()">
+                  <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> {{ isEditing ? 'Actualizar' : 'Guardar' }} Historia Clínica
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

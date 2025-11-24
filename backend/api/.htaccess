@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Habilitar reescritura de URLs
+Options +FollowSymLinks
+
+# Reescribir todas las peticiones a index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Configuración adicional para PHP
+php_flag display_errors on
+php_value error_reporting E_ALL
